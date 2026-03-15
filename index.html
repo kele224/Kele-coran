@@ -3,148 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kele-Coran | Mémorisation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Kele-Coran Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --gold: #D4AF37;
-            --green: #064e3b;
-            --black: #000000;
-        }
-
+        :root { --gold: #D4AF37; --green: #064e3b; --black: #000; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            margin: 0;
-            background: linear-gradient(180deg, var(--black) 0%, var(--green) 100%);
-            color: white;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            margin: 0; background: linear-gradient(180deg, var(--black) 0%, var(--green) 100%);
+            color: white; font-family: 'Poppins', sans-serif; min-height: 100vh; overflow-x: hidden;
         }
-
-        header {
-            text-align: center;
-            padding: 20px;
-            border-bottom: 2px solid var(--gold);
-            background: rgba(0,0,0,0.8);
+        header { text-align: center; padding: 15px; border-bottom: 2px solid var(--gold); background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; }
+        .logo { color: var(--gold); font-size: 22px; font-weight: bold; letter-spacing: 2px; }
+        
+        .panel { background: rgba(0,0,0,0.7); margin: 10px; padding: 15px; border-radius: 12px; border: 1px solid var(--gold); }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        
+        label { font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: bold; }
+        select, input { 
+            width: 100%; padding: 10px; background: #111; border: 1px solid #444; 
+            color: white; border-radius: 6px; font-size: 13px; outline: none;
         }
+        select:focus, input:focus { border-color: var(--gold); }
 
-        .title { color: var(--gold); font-size: 24px; font-weight: bold; letter-spacing: 2px; }
-
-        .container { padding: 15px; flex: 1; }
-
-        .card {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--gold);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
+        .btn { 
+            width: 100%; padding: 12px; border-radius: 25px; border: none;
+            font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px;
         }
-
-        label { color: var(--gold); font-size: 11px; text-transform: uppercase; font-weight: 600; }
-
-        select, input {
-            width: 100%; padding: 12px; margin: 5px 0 15px 0;
-            background: #111; border: 1px solid var(--gold);
-            color: white; border-radius: 8px; font-size: 14px;
+        .btn-gold { background: var(--gold); color: black; margin-top: 5px; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); margin-top: 10px; }
+        
+        #displayZone { padding: 10px; margin-bottom: 180px; }
+        .ayah-card { 
+            padding: 15px; margin-bottom: 12px; background: rgba(255,255,255,0.05); 
+            border-radius: 8px; border-left: 0px solid var(--gold); transition: 0.2s;
         }
+        .ayah-card.active { border-left: 4px solid var(--gold); background: rgba(212, 175, 55, 0.15); }
+        .ar { font-family: 'Amiri', serif; font-size: 26px; text-align: right; color: var(--gold); display: block; line-height: 1.8; direction: rtl; }
+        .fr { font-size: 14px; color: #ddd; margin-top: 8px; display: block; line-height: 1.4; }
 
-        .btn {
-            width: 100%; padding: 15px; border-radius: 30px; border: none;
-            font-weight: bold; cursor: pointer; text-transform: uppercase;
-            transition: 0.3s; margin-bottom: 10px;
-        }
-
-        .btn-gold { background: var(--gold); color: black; }
-        .btn-download { background: transparent; border: 2px solid var(--gold); color: var(--gold); }
-
-        /* Affichage Coran */
-        #displayZone { margin-top: 10px; margin-bottom: 160px; }
-        .ayah-box {
-            padding: 20px; margin-bottom: 10px; background: rgba(255,255,255,0.05);
-            border-radius: 10px; border-right: 0 solid var(--gold); transition: 0.3s;
-        }
-        .ayah-box.active { border-right: 5px solid var(--gold); background: rgba(212, 175, 55, 0.1); }
-        .arabic { font-family: 'Amiri', serif; font-size: 28px; text-align: right; color: var(--gold); display: block; line-height: 1.8; }
-        .french { font-size: 14px; color: #ccc; margin-top: 10px; display: block; }
-        .hidden { display: none; }
-
-        /* Lecteur fixe */
         .player {
             position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.95);
-            border-top: 2px solid var(--gold); padding: 20px; z-index: 100;
+            border-top: 2px solid var(--gold); padding: 12px; z-index: 1000;
         }
-        .prog { height: 4px; background: #333; width: 100%; margin-bottom: 15px; border-radius: 2px; }
-        #bar { height: 100%; background: var(--gold); width: 0%; }
-        .controls { display: flex; justify-content: space-around; align-items: center; }
-        .ctrl-btn { background: none; border: none; color: white; font-size: 30px; }
-        #playPauseBtn { font-size: 50px; color: var(--gold); }
+        .progress-bg { height: 4px; background: #333; border-radius: 2px; margin-bottom: 10px; position: relative; }
+        #progress { height: 100%; background: var(--gold); width: 0%; border-radius: 2px; }
+        .info { text-align: center; font-size: 11px; color: var(--gold); margin-bottom: 8px; font-weight: 600; }
+        .controls { display: flex; justify-content: space-evenly; align-items: center; }
+        .ctrl-btn { background: none; border: none; color: white; font-size: 28px; cursor: pointer; }
+        #playBtn { font-size: 48px; color: var(--gold); }
+        
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<header><div class="title">KELE-CORAN</div></header>
+<header><div class="logo">KELE-CORAN</div></header>
 
-<div class="container">
-    <!-- Etape 1 : Téléchargement -->
-    <div class="card">
-        <label>1. Choisir la sourate à télécharger</label>
-        <select id="surahSelect"></select>
-        <label>Récitateur</label>
-        <select id="reciterSelect">
-            <option value="ar.alafasy">Mishary Alafasy</option>
-            <option value="ar.hussary">Hussary (Murattal)</option>
-            <option value="ar.hussarymujawwad">Hussary (Mujawwad)</option>
-            <option value="ar.minshawi">Minshawy</option>
-        </select>
-        <button class="btn btn-download" id="btnDownload">📥 Télécharger pour Hors-ligne</button>
-        <div id="dlStatus" style="font-size: 10px; color: var(--gold); text-align: center;"></div>
+<div class="panel">
+    <label>Sourate à Télécharger / Etudier</label>
+    <select id="sTarget"></select>
+    
+    <div class="grid">
+        <div><label>Verset Début</label><input type="number" id="vStart" value="1" min="1"></div>
+        <div><label>Verset Fin</label><input type="number" id="vEnd" value="7" min="1"></div>
     </div>
 
-    <!-- Etape 2 : Configuration Mémorisation -->
-    <div class="card">
-        <label>2. Plage de lecture (Verset)</label>
-        <div style="display: flex; gap: 10px;">
-            <input type="number" id="vStart" value="1" min="1" placeholder="Début">
-            <input type="number" id="vEnd" value="7" min="1" placeholder="Fin">
+    <div class="grid">
+        <div><label>Récitateur</label>
+            <select id="reciter">
+                <option value="ar.alafasy">Mishary Alafasy</option>
+                <option value="ar.hussary">Hussary (Murattal)</option>
+                <option value="ar.hussarymujawwad">Hussary (Mujawwad)</option>
+                <option value="ar.minshawi">Minshawy</option>
+            </select>
         </div>
-        
-        <div style="display: flex; gap: 10px;">
-            <div style="flex:1">
-                <label>Répétitions / Verset</label>
-                <input type="number" id="repV" value="1" min="1">
-            </div>
-            <div style="flex:1">
-                <label>Vitesse</label>
-                <select id="speedSelect">
-                    <option value="1">1x</option>
-                    <option value="1.25">1.25x</option>
-                    <option value="1.5">1.5x</option>
-                    <option value="2">2x</option>
-                    <option value="0.75">0.75x</option>
-                </select>
-            </div>
+        <div><label>Vitesse (Max 4x)</label>
+            <select id="speed">
+                <option value="1">1x (Normal)</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+                <option value="0.75">0.75x</option>
+            </select>
         </div>
-
-        <label>Affichage</label>
-        <select id="langMode">
-            <option value="both">Arabe & Français</option>
-            <option value="ar">Arabe uniquement</option>
-            <option value="fr">Français uniquement</option>
-        </select>
-        
-        <button class="btn btn-gold" id="btnStart">Démarrer la mémorisation</button>
     </div>
 
-    <div id="displayZone"></div>
+    <div class="grid">
+        <div><label>Répétitions / Verset</label><input type="number" id="repV" value="1" min="1"></div>
+        <div><label>Langue</label><select id="mode"><option value="both">Arabe/Fr</option><option value="ar">Arabe</option><option value="fr">Français</option></select></div>
+    </div>
+
+    <button class="btn btn-outline" id="dlBtn">📥 Télécharger Sourate (Hors-Ligne)</button>
+    <button class="btn btn-gold" id="startBtn">Démarrer la Lecture</button>
 </div>
 
+<div id="displayZone"></div>
+
 <div class="player">
-    <div id="infoText" style="text-align: center; font-size: 11px; color: var(--gold); margin-bottom: 10px;">Prêt</div>
-    <div class="prog"><div id="bar"></div></div>
+    <div id="status" class="info">Prêt</div>
+    <div class="progress-bg"><div id="progress"></div></div>
     <div class="controls">
         <button class="ctrl-btn" onclick="changeAyah(-1)">⏮</button>
-        <button class="ctrl-btn" id="playPauseBtn">▶</button>
+        <button class="ctrl-btn" id="playBtn">▶</button>
         <button class="ctrl-btn" onclick="changeAyah(1)">⏭</button>
     </div>
 </div>
@@ -153,184 +114,172 @@
 
 <script>
     const audio = document.getElementById('audio');
-    const CACHE_NAME = "kele-coran-v1";
+    const status = document.getElementById('status');
+    const CACHE_NAME = 'kele-coran-v3';
     let playlist = [];
     let currentIndex = 0;
-    let currentRepCount = 0;
+    let currentRep = 0;
     let isPlaying = false;
 
-    // Charger les sourates au début
+    // Charger les sourates
     async function init() {
         try {
             const res = await fetch("https://api.alquran.cloud/v1/surah");
             const data = await res.json();
-            const select = document.getElementById('surahSelect');
-            data.data.forEach(s => {
-                let opt = document.createElement('option');
-                opt.value = s.number;
-                opt.text = `${s.number}. ${s.englishName} (${s.name})`;
-                select.appendChild(opt);
-            });
-        } catch(e) { alert("Vérifiez votre connexion pour charger les sourates."); }
+            document.getElementById('sTarget').innerHTML = data.data.map(s => `<option value="${s.number}">${s.number}. ${s.englishName} (${s.name})</option>`).join('');
+        } catch(e) { status.innerText = "Erreur réseau au démarrage."; }
     }
 
-    // TELECHARGEMENT SOURATE COMPLETE
-    document.getElementById('btnDownload').onclick = async () => {
-        const sNum = document.getElementById('surahSelect').value;
-        const reciter = document.getElementById('reciterSelect').value;
-        const status = document.getElementById('dlStatus');
-        const btn = document.getElementById('btnDownload');
-
+    // TELECHARGEMENT ANTI-CORS (Mode Opaque)
+    document.getElementById('dlBtn').onclick = async () => {
+        const sNum = document.getElementById('sTarget').value;
+        const reciter = document.getElementById('reciter').value;
+        const btn = document.getElementById('dlBtn');
+        
         btn.disabled = true;
-        status.innerText = "Initialisation du téléchargement...";
+        status.innerText = "Récupération des textes...";
 
         try {
-            // 1. Textes
             const resAr = await fetch(`https://api.alquran.cloud/v1/surah/${sNum}`);
             const resFr = await fetch(`https://api.alquran.cloud/v1/surah/${sNum}/fr.hamidullah`);
             const dAr = await resAr.json();
             const dFr = await resFr.json();
 
-            localStorage.setItem(`s_${sNum}_ar`, JSON.stringify(dAr.data));
-            localStorage.setItem(`s_${sNum}_fr`, JSON.stringify(dFr.data));
+            localStorage.setItem(`txt_ar_${sNum}`, JSON.stringify(dAr.data));
+            localStorage.setItem(`txt_fr_${sNum}`, JSON.stringify(dFr.data));
 
-            // 2. Audio (Cache)
             const cache = await caches.open(CACHE_NAME);
-            let ayahs = dAr.data.ayahs;
-            for(let i=0; i<ayahs.length; i++) {
-                status.innerText = `Téléchargement Audio : ${i+1}/${ayahs.length}`;
-                const url = `https://cdn.islamic.network/quran/audio/128/${reciter}/${ayahs[i].number}.mp3`;
-                
-                // On utilise un fetch classique avant de mettre en cache pour éviter les erreurs CORS
-                const response = await fetch(url);
-                if(response.ok) await cache.put(url, response);
-            }
+            const total = dAr.data.ayahs.length;
 
-            status.innerText = "✅ Sourate téléchargée avec succès !";
-            btn.disabled = false;
-        } catch(e) {
-            status.innerText = "❌ Erreur de téléchargement.";
-            btn.disabled = false;
+            for (let i = 0; i < total; i++) {
+                status.innerText = `Téléchargement Audio : ${i+1}/${total}`;
+                const url = `https://cdn.islamic.network/quran/audio/128/${reciter}/${dAr.data.ayahs[i].number}.mp3`;
+                
+                // On utilise no-cors pour contourner les restrictions si nécessaire
+                // Cela crée une réponse "opaque" que le navigateur peut stocker et lire
+                await cache.add(new Request(url, { mode: 'no-cors' }));
+            }
+            status.innerText = "✅ Sourate prête pour le Hors-Ligne !";
+        } catch (e) {
+            status.innerText = "❌ Erreur. Vérifiez votre connexion.";
+            console.error(e);
         }
+        btn.disabled = false;
     };
 
-    // LECTURE & MEMORISATION
-    document.getElementById('btnStart').onclick = () => {
-        const sNum = document.getElementById('surahSelect').value;
-        const start = parseInt(document.getElementById('vStart').value);
-        const end = parseInt(document.getElementById('vEnd').value);
-        const lang = document.getElementById('langMode').value;
+    // LECTURE
+    document.getElementById('startBtn').onclick = () => {
+        const sNum = document.getElementById('sTarget').value;
+        const vS = parseInt(document.getElementById('vStart').value);
+        const vE = parseInt(document.getElementById('vEnd').value);
+        const mode = document.getElementById('mode').value;
 
-        const dataAr = JSON.parse(localStorage.getItem(`s_${sNum}_ar`));
-        const dataFr = JSON.parse(localStorage.getItem(`s_${sNum}_fr`));
+        const dAr = JSON.parse(localStorage.getItem(`txt_ar_${sNum}`));
+        const dFr = JSON.parse(localStorage.getItem(`txt_fr_${sNum}`));
 
-        if(!dataAr) return alert("Veuillez d'abord télécharger cette sourate.");
+        if(!dAr) return alert("Veuillez d'abord télécharger cette sourate.");
 
         playlist = [];
-        for(let i = start-1; i < end; i++) {
-            if(dataAr.ayahs[i]) {
+        for(let i = vS-1; i < vE; i++) {
+            if(dAr.ayahs[i]) {
                 playlist.push({
-                    number: dataAr.ayahs[i].number,
-                    textAr: dataAr.ayahs[i].text,
-                    textFr: dataFr.ayahs[i].text,
-                    vNum: i+1,
-                    sNum: sNum
+                    number: dAr.ayahs[i].number,
+                    textAr: dAr.ayahs[i].text,
+                    textFr: dFr.ayahs[i].text,
+                    vNum: i+1, sNum: sNum
                 });
             }
         }
 
-        renderDisplay(lang);
+        renderUI(mode);
         currentIndex = 0;
-        currentRepCount = 0;
-        playAyah(0);
+        currentRep = 0;
+        loadAndPlay(0);
     };
 
-    function renderDisplay(lang) {
-        const zone = document.getElementById('displayZone');
-        zone.innerHTML = playlist.map((p, i) => `
-            <div class="ayah-box" id="ayah-${i}">
-                <span class="arabic ${lang==='fr'?'hidden':''}">${p.textAr}</span>
-                <span class="french ${lang==='ar'?'hidden':''}">${p.textFr}</span>
-                <small style="color:var(--gold)">Verset ${p.vNum}</small>
+    function renderUI(mode) {
+        document.getElementById('displayZone').innerHTML = playlist.map((p, i) => `
+            <div class="ayah-card" id="a-${i}">
+                <span class="ar ${mode==='fr'?'hidden':''}">${p.textAr}</span>
+                <span class="fr ${mode==='ar'?'hidden':''}">${p.textFr}</span>
+                <small style="color:var(--gold)">Sourate ${p.sNum} | Verset ${p.vNum}</small>
             </div>
         `).join('');
     }
 
-    async function playAyah(index) {
+    async function loadAndPlay(index) {
         if(index >= playlist.length) {
-            document.getElementById('infoText').innerText = "Session terminée";
+            status.innerText = "Mémorisation terminée !";
             isPlaying = false;
-            document.getElementById('playPauseBtn').innerText = "▶";
+            document.getElementById('playBtn').innerText = "▶";
             return;
         }
 
         currentIndex = index;
         const ayah = playlist[index];
-        const reciter = document.getElementById('reciterSelect').value;
+        const reciter = document.getElementById('reciter').value;
         const url = `https://cdn.islamic.network/quran/audio/128/${reciter}/${ayah.number}.mp3`;
 
-        // Style actif
-        document.querySelectorAll('.ayah-box').forEach(b => b.classList.remove('active'));
-        const el = document.getElementById(`ayah-${index}`);
-        el.classList.add('active');
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // UI active
+        document.querySelectorAll('.ayah-card').forEach(c => c.classList.remove('active'));
+        const el = document.getElementById(`a-${index}`);
+        if(el) { el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 
-        // Source Audio (Priorité au Cache)
+        // Source Audio
         const cache = await caches.open(CACHE_NAME);
-        const cachedResponse = await cache.match(url);
+        const cachedRes = await cache.match(url);
         
-        audio.src = cachedResponse ? URL.createObjectURL(await cachedResponse.blob()) : url;
-        audio.playbackRate = parseFloat(document.getElementById('speedSelect').value);
+        // Si pas en cache, on utilise l'URL directe
+        audio.src = cachedRes ? url : url; 
+        audio.playbackRate = parseFloat(document.getElementById('speed').value);
         
         audio.play();
         isPlaying = true;
-        document.getElementById('playPauseBtn').innerText = "⏸";
-        document.getElementById('infoText').innerText = `Sourate ${ayah.sNum} | Verset ${ayah.vNum} (Répétition ${currentRepCount+1})`;
+        document.getElementById('playBtn').innerText = "⏸";
+        status.innerText = `Lecture : Sourate ${ayah.sNum} | Verset ${ayah.vNum} (Répétition ${currentRep+1})`;
 
-        // Support MediaSession (Arrière-plan)
+        // Media Session (Arrière-plan)
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: `Verset ${ayah.vNum}`,
                 artist: `Sourate ${ayah.sNum} - Kele-Coran`,
                 artwork: [{ src: 'https://i.ibb.co/vzY3QW4/logo.png', sizes: '512x512', type: 'image/png' }]
             });
+            navigator.mediaSession.setActionHandler('nexttrack', () => changeAyah(1));
+            navigator.mediaSession.setActionHandler('previoustrack', () => changeAyah(-1));
         }
     }
 
     audio.onended = () => {
         const maxRep = parseInt(document.getElementById('repV').value);
-        currentRepCount++;
-
-        if(currentRepCount < maxRep) {
+        currentRep++;
+        if(currentRep < maxRep) {
             audio.play();
-            document.getElementById('infoText').innerText = `Sourate ${playlist[currentIndex].sNum} | Verset ${playlist[currentIndex].vNum} (Répétition ${currentRepCount+1})`;
+            status.innerText = `Lecture : Verset ${playlist[currentIndex].vNum} (Répétition ${currentRep+1})`;
         } else {
-            currentRepCount = 0;
-            playAyah(currentIndex + 1);
+            currentRep = 0;
+            loadAndPlay(currentIndex + 1);
         }
     };
 
-    document.getElementById('playPauseBtn').onclick = () => {
-        if(isPlaying) { audio.pause(); document.getElementById('playPauseBtn').innerText = "▶"; }
-        else { audio.play(); document.getElementById('playPauseBtn').innerText = "⏸"; }
+    document.getElementById('playBtn').onclick = () => {
+        if(isPlaying) { audio.pause(); document.getElementById('playBtn').innerText = "▶"; }
+        else { audio.play(); document.getElementById('playBtn').innerText = "⏸"; }
         isPlaying = !isPlaying;
     };
 
     function changeAyah(dir) {
-        let newIdx = currentIndex + dir;
-        if(newIdx >= 0 && newIdx < playlist.length) {
-            currentRepCount = 0;
-            playAyah(newIdx);
-        }
+        let n = currentIndex + dir;
+        if(n >= 0 && n < playlist.length) { currentRep = 0; loadAndPlay(n); }
     }
 
     audio.ontimeupdate = () => {
         const p = (audio.currentTime / audio.duration) * 100;
-        document.getElementById('bar').style.width = p + "%";
+        document.getElementById('progress').style.width = p + "%";
     };
 
     init();
 </script>
 
 </body>
-              </html>
+    </html>
